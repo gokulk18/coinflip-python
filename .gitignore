@@ -4,7 +4,7 @@ __pycache__/
 *.egg-info/
 
 # Terraform
-terraform/.terraform/
+**/.terraform/
 terraform/build/
 *.tfstate
 *.tfstate.*

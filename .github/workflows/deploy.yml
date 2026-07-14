@@ -35,7 +35,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.9.0"
+          terraform_version: "1.12.2"
 
       - name: Terraform Format Check
         working-directory: ${{ env.TF_WORKING_DIR }}
