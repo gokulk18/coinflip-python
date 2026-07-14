@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coin Flip — AWS Serverless Demo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="card">
+    <h1 class="title">Coin Flip</h1>
+    <p class="description">
+      A tiny app for learning AWS Serverless Architecture. Clicking the button
+      sends a request through <strong>API Gateway</strong> to a
+      <strong>Lambda</strong> function written in plain Python, which flips a
+      coin and returns the result as JSON.
+    </p>
+
+    <button id="flip-btn" class="flip-button">
+      <span class="btn-label">Flip Coin</span>
+      <span class="spinner" hidden></span>
+    </button>
+
+    <section id="result-area" class="result-area" aria-live="polite">
+      <p class="result-placeholder">Press the button to flip a coin.</p>
+    </section>
+
+    <p class="error-message" id="error-message" hidden></p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
