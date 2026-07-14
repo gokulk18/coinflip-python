@@ -1,7 +1,22 @@
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_file = "${path.module}/../backend/lambda_function.py"
-  output_path = "${path.module}/build/lambda_function.zip"
+locals {
+  lambda_source_path = "${path.module}/../backend/lambda_function.py"
+  lambda_zip_path    = "${path.module}/build/lambda_function.zip"
+}
+
+resource "terraform_data" "lambda_zip" {
+  triggers_replace = {
+    source_hash = filemd5(local.lambda_source_path)
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["python", "-c"]
+    command     = <<-EOT
+      import os, zipfile
+      os.makedirs(os.path.dirname(r"${local.lambda_zip_path}"), exist_ok=True)
+      with zipfile.ZipFile(r"${local.lambda_zip_path}", "w", zipfile.ZIP_DEFLATED) as zf:
+          zf.write(r"${local.lambda_source_path}", arcname="lambda_function.py")
+    EOT
+  }
 }
 
 data "aws_iam_policy_document" "lambda_assume_role" {
@@ -37,14 +52,15 @@ resource "aws_lambda_function" "flip_coin" {
   handler       = "lambda_function.lambda_handler"
   runtime       = var.lambda_runtime
 
-  filename         = data.archive_file.lambda_zip.output_path
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  filename         = local.lambda_zip_path
+  source_code_hash = filebase64sha256(local.lambda_source_path)
 
   timeout = 5
 
   depends_on = [
     aws_cloudwatch_log_group.lambda_logs,
     aws_iam_role_policy_attachment.lambda_basic_execution,
+    terraform_data.lambda_zip,
   ]
 }
 
